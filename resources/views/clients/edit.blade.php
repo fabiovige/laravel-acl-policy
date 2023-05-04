@@ -36,6 +36,7 @@
                     <input type="text" name="phone" value="{{ $client->phone }}" class="form-control" placeholder="Phone" maxlength="11">
                 </div>
             </div>
+
             <div class="col-xs-12 col-sm-12 col-md-12 text-center">
               <button type="submit" class="btn btn-primary">Submit</button>
             </div>

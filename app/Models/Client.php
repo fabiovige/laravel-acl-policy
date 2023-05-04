@@ -12,16 +12,17 @@ class Client extends Model
     protected $fillable = [
         'name',
         'phone',
-        'created_by'
+        'user_id',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id', 'created_by');
+        return $this->belongsTo(User::class);
     }
 
-    public function users()
+    public static function getAll()
     {
-        return $this->belongsToMany(User::class);
+        $perfil = auth()->user()->perfil();
+        return $perfil === 'Admin' ? self::all() : self::where('user_id', '=', auth()->id())->get();
     }
 }

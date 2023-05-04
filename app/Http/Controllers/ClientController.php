@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      */
@@ -16,7 +15,13 @@ class ClientController extends Controller
     {
         $this->authorize('viewAny', Client::class);
 
-        $clients =  auth()->user()->hasRole('Admin') ? Client::All() : Client::where('user_id','=', auth()->id())->get();
+        if(auth()->user()->can('client-list-any')){
+            $clients = Client::where('user_id', '=', auth()->id())->get();
+        }
+
+        if(auth()->user()->can('client-list')){
+            $clients = Client::all();
+        }
 
         return view('clients.index',compact('clients'));
     }
@@ -27,8 +32,9 @@ class ClientController extends Controller
     public function create()
     {
         $this->authorize('create', Client::class);
+        $users = User::pluck('name','id');
 
-        return view('clients.create' );
+        return view('clients.create',  );
     }
 
     /**
@@ -44,7 +50,7 @@ class ClientController extends Controller
         ]);
 
         $data = $request->all();
-        $data['created_by'] = auth()->id();
+        $data['user_id'] = auth()->id();
 
         Client::create($data);
 
@@ -68,8 +74,10 @@ class ClientController extends Controller
     public function edit(Client $client)
     {
         $this->authorize('update', $client);
+        $users = User::pluck('name','id');
+        $userClient = $client->user->id;
 
-        return view('clients.edit',compact('client'));
+        return view('clients.edit',compact('client', ));
     }
 
     /**

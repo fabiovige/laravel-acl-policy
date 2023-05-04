@@ -30,13 +30,25 @@
             <td>{{ $client->id }}</td>
             <td>{{ $client->name }}</td>
             <td>{{ $client->phone }}</td>
-            <td>{{ $client->created_by ?? '' }}</td>
+            <td>{{ $client->user_id ?? '' }}</td>
             <td>
                 <form action="{{ route('clients.destroy',$client->id) }}" method="POST">
-                    <a class="btn btn-info" href="{{ route('clients.show',$client->id) }}">Show</a>
-                    @can('client-edit')
-                    <a class="btn btn-primary" href="{{ route('clients.edit',$client->id) }}">Edit</a>
+
+                    @can('client-show')
+                        <a class="btn btn-info" href="{{ route('clients.show',$client->id) }}">Show</a>
                     @endcan
+
+                    @can('client-edit')
+                        @role('Admin')
+                            <a class="btn btn-primary" href="{{ route('clients.edit', $client->id) }}">Edit</a>
+                        @else
+                            @if( auth()->id() == $client->user_id )
+                                <a class="btn btn-primary" href="{{ route('clients.edit', $client->id) }}">Edit</a>
+                            @endif
+                        @endrole
+                    @endcan
+
+
                     @csrf
                     @method('DELETE')
                     @can('client-delete')

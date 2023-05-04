@@ -23,15 +23,13 @@
                 {{ $client->phone }}
             </div>
         </div>
+
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
-                <strong>User responsible:</strong>
-                @foreach( $client->users as $user)
-                    {{ $user->name }} - 
-                    @foreach($user->roles as $role)
-                        {{ $role->name }}
-                    @endforeach
-                @endforeach
+                <strong>User:</strong>
+                {{ $client->user->name }} <br>
+                <strong>E-mail:</strong>
+                {{ $client->user->email }}
             </div>
         </div>
     </div>

@@ -22,7 +22,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'password'
     ];
 
     /**
@@ -49,8 +49,16 @@ class User extends Authenticatable
         return $this->hasOne(Client::class);
     }
 
-    public function clients()
+    public function isAdmin(): bool
     {
-        return $this->belongsToMany(Client::class);
+        $admin = auth()->user()->hasRole('Admin');
+        return $admin ? true : false;
     }
+
+    public function perfil(): string
+    {
+        $roles = auth()->user()->roles();
+        return $roles->pluck('name', 'name')->first();
+    }
+
 }

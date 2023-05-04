@@ -17,9 +17,17 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $data = User::orderBy('id','DESC')->paginate(5);
-        return view('users.index',compact('data'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        $this->authorize('viewAny', User::class);
+
+        if(auth()->user()->can('user-list-any')){
+            $data = User::where('user_id', '=', auth()->id())->get();
+        }
+
+        if(auth()->user()->can('user-list')){
+            $data = User::all();
+        }
+
+        return view('users.index',compact('data'));
     }
 
     /**
@@ -27,10 +35,10 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::pluck('name','name')->all();
-        $clients = Client::pluck('name','id')->all();
+        $this->authorize('create', User::class);
 
-        return view('users.create',compact('roles', 'clients'));
+        $roles = Role::pluck('name','name')->all();
+        return view('users.create',compact('roles' ));
     }
 
     /**
@@ -38,18 +46,21 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', User::class);
+
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
-            'roles' => 'required'
+            'role' => 'required'
         ]);
 
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
+        $input['user_id'] = auth()->id();
 
         $user = User::create($input);
-        $user->assignRole($request->input('roles'));
+        $user->assignRole($request->input('role'));
 
         return redirect()->route('users.index')
                         ->with('success','User created successfully');
@@ -58,38 +69,37 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $user)
     {
-        $user = User::find($id);
+        $this->authorize('any', User::class);
         return view('users.show',compact('user'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
-        $user = User::find($id);
+        $this->authorize('update', $user);
 
         $roles = Role::pluck('name','name')->all();
-        $clients = Client::pluck('name','id')->all();
-
         $userRole = $user->roles->pluck('name','name')->all();
-        $userClient = $user->clients()->get();
 
-        return view('users.edit',compact('user','clients','roles','userRole', 'userClient'));
+        return view('users.edit',compact('user','roles','userRole', ));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
+        $this->authorize('update', $user);
+
         $this->validate($request, [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
             'password' => 'same:confirm-password',
-            'roles' => 'required'
+            'role' => 'required'
         ]);
 
         $input = $request->all();
@@ -99,15 +109,13 @@ class UserController extends Controller
             $input = Arr::except($input,array('password'));
         }
 
-        $user = User::find($id);
         $user->update($input);
 
-        DB::table('model_has_roles')->where('model_id',$id)->delete();
-        $user->assignRole($request->input('roles'));
+        DB::table('model_has_roles')->where('model_id',$user->id)->delete();
+        $user->assignRole($request->input('role'));
 
-        DB::table('client_user')->whereIn('client_id',$request->input('clients'))->delete();
-
-        $user->clients()->sync($request->input('clients'));
+        //DB::table('client_user')->whereIn('client_id',$request->input('clients'))->delete();
+        //$user->clients()->sync($request->input('clients'));
 
         return redirect()->route('users.index')
                         ->with('success','User updated successfully');
@@ -118,6 +126,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $this->authorize('update', $user);
 
         $user->delete();
         return redirect()->route('users.index')
