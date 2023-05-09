@@ -34,7 +34,7 @@
                     </form>
                     <hr>
                     <div class="row mt-3">
-                        <h4>Permissões atribuídas:</h4>
+                        <h4>Permissões:</h4>
 
                         @if ($role->permissions)
                             @foreach ($role->permissions as $role_permission)
@@ -68,7 +68,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <button type="submit" class="btn btn-success">Atribuir permissão</button>
+                            <button type="submit" class="btn btn-success">Adicionar</button>
                         </div>
 
                     </form>

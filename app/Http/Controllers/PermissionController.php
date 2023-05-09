@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class PermissionController extends Controller
 {
@@ -38,7 +39,7 @@ class PermissionController extends Controller
         $role = Permission::create($validated);
         //$role->syncPermissions($request->input('permission'));
 
-        return redirect()->route('permissions.index')->with('success','Registro criado com sucesso.');
+        return redirect()->route('permissions.index')->with('success','Registro adicionado.');
     }
 
     /**
@@ -54,7 +55,8 @@ class PermissionController extends Controller
      */
     public function edit(Permission $permission)
     {
-        return view('permissions.edit', compact('permission'));
+        $roles = Role::all();
+        return view('permissions.edit', compact('permission', 'roles'));
     }
 
     /**
@@ -66,7 +68,7 @@ class PermissionController extends Controller
             'name' => ['required', 'min:3', 'unique:permissions,name'],
         ]);
         $permission->update($validated);
-        return redirect()->route('permissions.index')->with('success','Registro atualizado com sucesso.');
+        return redirect()->route('permissions.index')->with('success','Registro atualizado.');
     }
 
     /**
@@ -75,6 +77,25 @@ class PermissionController extends Controller
     public function destroy(Permission $permission)
     {
         $permission->delete();
-        return redirect()->route('permissions.index')->with('success','Registro excluído com sucesso.');
+        return redirect()->route('permissions.index')->with('success','Registro removido.');
     }
+
+    public function assignRole(Request $request, Permission $permission)
+    {
+        if($permission->hasRole($request->role)){
+            return redirect()->route('permissions.edit', $permission->id)->with('warning','Registro já está adicionado.');
+        }
+        $permission->assignRole($request->role);
+        return redirect()->route('permissions.edit', $permission->id)->with('success','Registro adicionado.');
+    }
+
+    public function removeRole(Permission $permission, Role $role)
+    {
+        if($permission->hasRole($role)){
+            $permission->removeRole($role);
+            return redirect()->route('permissions.edit', $permission->id)->with('success','Registro removido.');
+        }
+        return redirect()->route('permissions.edit', $permission->id)->with('warning','Registro não existe.');
+    }
+
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -33,7 +32,7 @@ class RoleController extends Controller
             'name' => ['required', 'min:3', 'unique:roles,name'],
         ]);
         Role::create($validated);
-        return redirect()->route('roles.index')->with('success','Registro criado com sucesso.');
+        return redirect()->route('roles.index')->with('success','Registro adicionado.');
     }
 
     public function show(string $id)
@@ -58,30 +57,30 @@ class RoleController extends Controller
             'name' => ['required', 'min:3', 'unique:roles,name,id'],
         ]);
         $role->update($validated);
-        return redirect()->route('roles.index')->with('success','Registro atualizado com sucesso.');
+        return redirect()->route('roles.index')->with('success','Registro atualizado.');
     }
 
     public function destroy(Role $role)
     {
         $role->delete();
-        return redirect()->route('roles.index')->with('success','Registro excluído com sucesso.');
+        return redirect()->route('roles.index')->with('success','Registro removido.');
     }
 
     public function givePermission(Request $request, Role $role)
     {
         if($role->hasPermissionTo($request->permission)){
-            return back()->with('message', 'Permissão já esta adicionado ao papel.');
+            return redirect()->route('roles.edit', $role->id)->with('warning','Registro já está adicionado.');
         }
         $role->givePermissionTo($request->permission);
-        return back()->with('message', 'Permissão adicionado ao papel com sucesso.');
+        return redirect()->route('roles.edit', $role->id)->with('success','Registro adicionado.');
     }
 
     public function revokePermission(Role $role, Permission $permission)
     {
         if($role->hasPermissionTo($permission)){
             $role->revokePermissionTo($permission);
-            return back()->with('message', 'Permissão removido do papel.');
+            return redirect()->route('roles.edit', $role->id)->with('success','Registro removido.');
         }
-        return back()->with('message', 'Permissão não existe.');
+        return redirect()->route('roles.edit', $role->id)->with('success','Registro não existe.');
     }
 }

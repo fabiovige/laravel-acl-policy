@@ -82,6 +82,12 @@
                     </div>
                 @endif
 
+                @if ($message = Session::get('warning'))
+                <div class="alert alert-warning">
+                    {{ $message }}
+                </div>
+                @endif
+
                 @yield('content')
 
             </div>

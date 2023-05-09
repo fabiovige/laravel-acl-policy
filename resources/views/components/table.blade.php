@@ -1,6 +1,6 @@
 <div class="row mb-3">
     <div class="col-md-12">
-        <a class="btn btn-primary" href="{{ route($route.'.create') }}"> Cadastrar novo registro</a>
+        <a class="btn btn-primary" href="{{ route($route.'.create') }}"> Novo registro</a>
     </div>
 </div>
 
@@ -13,7 +13,7 @@
                         <tr>
                             <th scope="col" style="width: 80px">#</th>
                             <th scope="col">Nome</th>
-                            <th scope="col" style="width: 160px"></th>
+                            <th scope="col" style="width: 240px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -23,6 +23,11 @@
                                     <th scope="row">{{ $row->id }}</th>
                                     <td>{{ $row->name }}</td>
                                     <td class="d-flex justify-content-between ">
+
+                                        @if($route=='users')
+                                            <a href="{{route($route.'.show', $row->id)}}" class="btn btn-dark ">Papéis</a>
+                                        @endif
+
                                         <a href="{{route($route.'.edit', $row->id)}}" class="btn btn-primary ">Editar</a>
 
                                         <form method="POST" action="{{route($route.'.destroy', $row->id)}}" onsubmit="return confirm('Deseja realmente excluir?')">

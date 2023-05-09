@@ -2,29 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         //$this->authorize('viewAny', User::class);
-
-        return view('users.index',);
+        $users = User::all();
+        return view('users.index', compact('users'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $this->authorize('create', User::class);
@@ -34,9 +28,6 @@ class UserController extends Controller
         return view('users.create',compact('roles' ));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $this->authorize('create', User::class);
@@ -59,18 +50,14 @@ class UserController extends Controller
                         ->with('success','User created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(User $user)
     {
-        $this->authorize('any', User::class);
-        return view('users.show',compact('user'));
+        //$this->authorize('any', User::class);
+        $roles = Role::all();
+        $permissions = Permission::all();
+        return view('users.role',compact('user', 'roles', 'permissions'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(User $user)
     {
         $this->authorize('update', $user);
@@ -82,9 +69,6 @@ class UserController extends Controller
         return view('users.edit',compact('user','roles','userRole', ));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, User $user)
     {
         $this->authorize('update', $user);
@@ -115,15 +99,49 @@ class UserController extends Controller
                         ->with('success','User updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(User $user)
     {
-        $this->authorize('update', $user);
-
+        //$this->authorize('update', $user);
+        if($user->hasRole('admin')){
+            return redirect()->route('users.index')->with('warning','Você é um administrador.');
+        }
         $user->delete();
-        return redirect()->route('users.index')
-                        ->with('success','User deleted successfully');
+        return redirect()->route('users.index')->with('success','Usuário removido.');
+    }
+
+    public function assignRole(Request $request, User $user)
+    {
+        if($user->hasRole($request->role)){
+            return redirect()->route('users.show', $user->id)->with('warning','Registro já está adicionado.');
+        }
+        $user->assignRole($request->role);
+        return redirect()->route('users.show', $user->id)->with('success','Registro adicionado.');
+    }
+
+    public function removeRole(User $user, Role $role)
+    {
+        if($user->hasRole($role)){
+            $user->removeRole($role);
+            return redirect()->route('users.show', $user->id)->with('success','Registro removido.');
+        }
+        return redirect()->route('users.show', $user->id)->with('warning','Registro não existe.');
+    }
+
+    public function givePermission(Request $request, User $user)
+    {
+        if($user->hasPermissionTo($request->permission)){
+            return redirect()->route('users.show', $user->id)->with('warning','Registro já está adicionado.');
+        }
+        $user->givePermissionTo($request->permission);
+        return redirect()->route('users.show', $user->id)->with('success','Registro adicionado.');
+    }
+
+    public function revokePermission(User $user, Permission $permission)
+    {
+        if($user->hasPermissionTo($permission)){
+            $user->revokePermissionTo($permission);
+            return redirect()->route('users.show', $user->id)->with('success','Registro removido.');
+        }
+        return redirect()->route('users.show', $user->id)->with('warning','Registro não existe.');
     }
 }
