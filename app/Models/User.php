@@ -13,6 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    const ADMIN = 'Admin';
 
     /**
      * The attributes that are mass assignable.
@@ -61,4 +62,13 @@ class User extends Authenticatable
         return $roles->pluck('name', 'name')->first();
     }
 
+    public static function getRoles()
+    {
+        if(auth()->user()->hasRole(self::ADMIN)){
+            $roles = Role::pluck('name','name')->all();
+        } else {
+            $roles = Role::where('name','!=', self::ADMIN)->pluck('name','name')->all();
+        }
+        return $roles;
+    }
 }

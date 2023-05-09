@@ -30,7 +30,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
+                        @include('layouts.menu')
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -51,12 +51,7 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }} -
-                                    <strong>
-                                    @foreach ( Auth::user()->roles()->pluck('name') as $role )
-                                        {{ $role }}
-                                    @endforeach
-                                    </strong>
+                                    {{ Auth::user()->name }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -80,16 +75,15 @@
         <main class="py-4">
 
             <div class="container">
-                <div>
-                    <ul class="nav ">
-                        <li class="nav-item"><a class="nav-link" href="{{ route('users.index')}}">Users</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('roles.index')}}">Roles</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('clients.index')}}">Clients</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="container">
+
+                @if ($message = Session::get('success'))
+                    <div class="alert alert-success">
+                        {{ $message }}
+                    </div>
+                @endif
+
                 @yield('content')
+
             </div>
         </main>
     </div>

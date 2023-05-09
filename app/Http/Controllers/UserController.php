@@ -17,17 +17,9 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('viewAny', User::class);
+        //$this->authorize('viewAny', User::class);
 
-        if(auth()->user()->can('user-list-any')){
-            $data = User::where('user_id', '=', auth()->id())->get();
-        }
-
-        if(auth()->user()->can('user-list')){
-            $data = User::all();
-        }
-
-        return view('users.index',compact('data'));
+        return view('users.index',);
     }
 
     /**
@@ -37,7 +29,8 @@ class UserController extends Controller
     {
         $this->authorize('create', User::class);
 
-        $roles = Role::pluck('name','name')->all();
+        $roles = User::getRoles();
+
         return view('users.create',compact('roles' ));
     }
 
@@ -82,7 +75,8 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
 
-        $roles = Role::pluck('name','name')->all();
+        $roles = User::getRoles();
+
         $userRole = $user->roles->pluck('name','name')->all();
 
         return view('users.edit',compact('user','roles','userRole', ));

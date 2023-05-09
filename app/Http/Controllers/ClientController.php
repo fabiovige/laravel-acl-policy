@@ -13,17 +13,9 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', Client::class);
+        //$this->authorize('viewAny', Client::class);
 
-        if(auth()->user()->can('client-list-any')){
-            $clients = Client::where('user_id', '=', auth()->id())->get();
-        }
-
-        if(auth()->user()->can('client-list')){
-            $clients = Client::all();
-        }
-
-        return view('clients.index',compact('clients'));
+        return view('clients.index');
     }
 
     /**
