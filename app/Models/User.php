@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -50,10 +52,11 @@ class User extends Authenticatable
         return $this->hasOne(Client::class);
     }
 
-    public function isAdmin(): bool
+    public function isAdmin(): Attribute
     {
-        $admin = auth()->user()->hasRole('Admin');
-        return $admin ? true : false;
+        return new Attribute(
+            get: fn()=> $this->role_id == 1,
+        );
     }
 
     public function perfil(): string

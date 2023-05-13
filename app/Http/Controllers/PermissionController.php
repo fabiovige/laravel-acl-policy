@@ -13,6 +13,8 @@ class PermissionController extends Controller
      */
     public function index()
     {
+        $this->authorize('permissions-list');
+
         $permissions = Permission::all();
         $data = [
             'permissions' => $permissions
@@ -25,6 +27,8 @@ class PermissionController extends Controller
      */
     public function create()
     {
+        $this->authorize('permissions-create');
+
         return view('permissions.create');
     }
 
@@ -33,6 +37,8 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('permissions-create');
+
         $validated = $request->validate([
             'name' => ['required', 'min:3', 'unique:permissions,name'],
         ]);
@@ -47,7 +53,7 @@ class PermissionController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $this->authorize('permissions-show');
     }
 
     /**
@@ -55,6 +61,8 @@ class PermissionController extends Controller
      */
     public function edit(Permission $permission)
     {
+        $this->authorize('permissions-update');
+
         $roles = Role::all();
         return view('permissions.edit', compact('permission', 'roles'));
     }
@@ -64,6 +72,8 @@ class PermissionController extends Controller
      */
     public function update(Request $request, Permission $permission)
     {
+        $this->authorize('permissions-update');
+
         $validated = $request->validate([
             'name' => ['required', 'min:3', 'unique:permissions,name'],
         ]);
@@ -76,21 +86,33 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
+        $this->authorize('permissions-destroy');
+
         $permission->delete();
         return redirect()->route('permissions.index')->with('success','Registro removido.');
     }
 
     public function assignRole(Request $request, Permission $permission)
     {
-        if($permission->hasRole($request->role)){
-            return redirect()->route('permissions.edit', $permission->id)->with('warning','Registro já está adicionado.');
+        // remove role
+        foreach($permission->roles as $role) {
+            if($permission->hasRole($role)){
+                $permission->removeRole($role);
+            }
         }
-        $permission->assignRole($request->role);
+
+        foreach($request->role as $role) {
+            if(!$permission->hasRole($request->role)){
+                $permission->assignRole($request->role);
+            }
+        }
         return redirect()->route('permissions.edit', $permission->id)->with('success','Registro adicionado.');
     }
 
     public function removeRole(Permission $permission, Role $role)
     {
+        $this->authorize('permissions-update');
+
         if($permission->hasRole($role)){
             $permission->removeRole($role);
             return redirect()->route('permissions.edit', $permission->id)->with('success','Registro removido.');

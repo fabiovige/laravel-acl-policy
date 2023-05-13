@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+
+use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Permission;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -23,7 +26,20 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::before(function ($user, $ability) {
-            return $user->hasRole('Admin') ? true : null;
+            if ($user->hasRole('admin')) {
+                return true;
+            }
         });
+
+        $permissions = Permission::all();
+        if($permissions->count() > 0){
+            foreach ($permissions as $permission) {
+                Gate::define($permission->name, function (User $user) use ($permission) {
+                    return $permission->roles->contains($user->role);
+                });
+            }
+        }
+
+        //dd(Gate::abilities());
     }
 }

@@ -8,9 +8,6 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    function __construct()
-    {
-    }
 
     public function index(Request $request)
     {
@@ -62,21 +59,37 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
+        $this->authorize('roles-destroy');
+
         $role->delete();
         return redirect()->route('roles.index')->with('success','Registro removido.');
     }
 
     public function givePermission(Request $request, Role $role)
     {
-        if($role->hasPermissionTo($request->permission)){
-            return redirect()->route('roles.edit', $role->id)->with('warning','Registro já está adicionado.');
+        // revoke permissions role
+        $rolePermissions = $role->permissions;
+        foreach($rolePermissions as $rolePermission){
+            if($role->hasPermissionTo($rolePermission)){
+                $role->revokePermissionTo($rolePermission);
+            }
         }
-        $role->givePermissionTo($request->permission);
+
+        // add new permission role
+        if($request->permission){
+            foreach($request->permission as $permission){
+                if(!$role->hasPermissionTo($permission)){
+                    $role->givePermissionTo($permission);
+                }
+            }
+        }
         return redirect()->route('roles.edit', $role->id)->with('success','Registro adicionado.');
     }
 
     public function revokePermission(Role $role, Permission $permission)
     {
+        $this->authorize('roles-update');
+
         if($role->hasPermissionTo($permission)){
             $role->revokePermissionTo($permission);
             return redirect()->route('roles.edit', $role->id)->with('success','Registro removido.');

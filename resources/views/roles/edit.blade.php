@@ -1,11 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <div class="row">
-        <div class="col-md-12 py-3 ">
-            <h2>Edição de Papéis</h2>
-        </div>
-    </div>
-
+    <x-back title="Edição de papéis" route="roles"></x-back>
 
     <div class="row">
         <div class="col-md-12">
@@ -36,42 +31,29 @@
                     <div class="row mt-3">
                         <h4>Permissões:</h4>
 
-                        @if ($role->permissions)
-                            @foreach ($role->permissions as $role_permission)
-                            <div class="col-2">
-                                <form method="POST" action="{{route('roles.permissions.revoke', [$role->id, $role_permission->id])}}" onsubmit="return confirm('Deseja realmente excluir?')">
-                                    @csrf
-                                    @method("DELETE")
-                                    <button type="submit" class="btn btn-sm btn-secondary">{{ $role_permission->name }}</button>
-                                </form>
-                            </div>
+                        <form action="{{ route('roles.permissions', $role->id) }}" method="POST">
+                            @csrf
+                            @method('POST')
+
+                            @foreach ($permissions as $permission)
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="{{ $permission->name }}"
+                                        name="permission[]" @if ($role->permissions->contains($permission)) checked @endif>
+                                    <label class="form-check-label" for="permission">
+                                        {{ $permission->name }}
+                                    </label>
+                                </div>
                             @endforeach
-                        @endif
+
+                            <div class="d-flex justify-content-between mt-3">
+                                <button type="submit" class="btn btn-success">{{ __('Save Permission') }}</button>
+                            </div>
+
+                        </form>
+                        
                     </div>
 
-                    <form action="{{ route('roles.permissions', $role->id) }}" method="POST">
-                        @csrf
-                        @method('POST')
 
-                        <div class="py-3">
-                            <select class="form-select" aria-label="select" name="permission">
-                                @foreach ($permissions as $permission)
-                                    <option value="{{ $permission->name }}">{{ $permission->name }}</option>
-                                @endforeach
-                            </select>
-
-                            @error('permission')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <button type="submit" class="btn btn-success">Adicionar</button>
-                        </div>
-
-                    </form>
 
                 </div>
             </div>

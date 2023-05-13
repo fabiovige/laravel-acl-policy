@@ -1,14 +1,13 @@
 @extends('layouts.app')
 @section('content')
+
 <div class="row">
-    <div class="col-lg-12 margin-tb">
+    <div class="col-lg-12 margin-tb d-flex justify-content-between">
         <div class="pull-left">
-            <h2>Gerenciamento de Permissões</h2>
+            <h2>{{ __('Permission Management') }}</h2>
         </div>
         <div class="pull-right">
-        @can('role-create')
-            <a class="btn btn-success" href="{{ route('permissions.create') }}"> Create New Role</a>
-            @endcan
+            <a class="btn btn-primary" href="{{ route('permissions.create') }}"> {{ __('New record') }}</a>
         </div>
     </div>
 </div>

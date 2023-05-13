@@ -1,40 +1,80 @@
-<div class="row mb-3">
-    <div class="col-md-12">
-        <a class="btn btn-primary" href="{{ route($route.'.create') }}"> Novo registro</a>
-    </div>
-</div>
-
-<div class="row">
+<div class="row py-3">
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
                 <table class="table table-striped ">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 80px">#</th>
+                            <th scope="col" style="width: 50px">#</th>
                             <th scope="col">Nome</th>
-                            <th scope="col" style="width: 240px"></th>
+                                <th scope="col">
+                                    @if($route == 'roles')
+                                        {{ __('Permissions') }}
+                                    @else
+                                        {{ __('Roles') }}
+                                    @endif
+                                </th>
+                                <th scope="col" style="width: 100px">Ações</th>
+
                         </tr>
                     </thead>
                     <tbody>
                         @if ($rows->count() > 0)
                             @foreach ($rows as $row)
                                 <tr>
-                                    <th scope="row">{{ $row->id }}</th>
+                                    <th scope="row" style="white-space: nowrap">{{ $row->id }}</th>
                                     <td>{{ $row->name }}</td>
-                                    <td class="d-flex justify-content-between ">
-
-                                        @if($route=='users')
-                                            <a href="{{route($route.'.show', $row->id)}}" class="btn btn-dark ">Papéis</a>
+                                    <td>
+                                        @if($row->roles)
+                                            <ul>
+                                                @foreach ( $row->roles as $role )
+                                                    <li>
+                                                        {{ $role->name }}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
                                         @endif
 
-                                        <a href="{{route($route.'.edit', $row->id)}}" class="btn btn-primary ">Editar</a>
+                                        @if($row->permissions)
+                                            <ul>
+                                                @foreach ( $row->permissions as $permission )
+                                                    <li>
+                                                        {{ $permission->name }}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </td>
 
-                                        <form method="POST" action="{{route($route.'.destroy', $row->id)}}" onsubmit="return confirm('Deseja realmente excluir?')">
+
+                                    <td class="" style="white-space: nowrap;">
+
+                                        @if($route=='users')
+                                            @can("$route.show")
+                                                <a href="{{route($route.'.show', $row->id)}}" class="btn btn-dark ">{{ __('Roles') }}</a>
+                                            @endcan
+                                        @endif
+
+                                        @can("$route.edit")
+                                            <a href="{{route($route.'.edit', $row->id)}}" class="btn btn-primary ">{{ __('Edit') }}</a>
+                                        @endcan
+
+                                        @can("$route.destroy")
+
+
+                                        <a class="btn btn-danger " href="#"
+                                        onclick="event.preventDefault();
+                                                      document.getElementById('remove-form').submit();">
+                                         {{ __('Remove') }}
+                                        </a>
+
+                                        <form id="remove-form" action="{{route($route.'.destroy', $row->id)}}" method="POST" class="d-none">
                                             @csrf
                                             @method("DELETE")
-                                            <button type="submit" class="btn btn-danger">Excluir</button>
                                         </form>
+
+                                        @endcan
+
                                     </td>
                                 </tr>
                             @endforeach

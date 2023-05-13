@@ -1,10 +1,7 @@
 @extends('layouts.app')
 @section('content')
-    <div class="row">
-        <div class="col-md-12 py-3 ">
-            <h2>Cadastro de Papéis</h2>
-        </div>
-    </div>
+
+<x-back title="Cadastro de papéis" route="roles"></x-back>
 
 
     <div class="row">
@@ -26,11 +23,9 @@
                             @enderror
                         </div>
 
-                        <div class="d-flex justify-content-between">
-                            <button type="submit" class="btn btn-success">Salvar</button>
-                            <a class="btn btn-outline-info" href="{{ route('roles.index') }}"> Cancelar</a>
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="submit" class="btn btn-success">{{ __('Save') }}</button>
                         </div>
-
                     </form>
                 </div>
             </div>

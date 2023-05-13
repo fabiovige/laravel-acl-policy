@@ -12,7 +12,7 @@ class ClientPolicy
     public function before(User $user, string $ability): bool|null
     {
         //dd($user->isAdmin());
-        if ($user->isAdmin()) {
+        if ($user->is_admin) {
             return true;
         }
 
