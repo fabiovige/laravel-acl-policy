@@ -13,6 +13,8 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('users.index');
+
         if(auth()->user()->hasRole('admin')){
             $users = User::all();
         } else {
@@ -23,11 +25,15 @@ class UserController extends Controller
 
     public function create()
     {
+        $this->authorize('users.create');
+
         return view('users.create');
     }
 
     public function store(Request $request)
     {
+        $this->authorize('users.create');
+
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
@@ -44,17 +50,24 @@ class UserController extends Controller
     }
     public function show(User $user)
     {
-        $roles = Role::all();
-        $permissions = Permission::all();
+        $this->authorize('users.show');
+
+        $roles = auth()->id() === User::ADMIN ? Role::all() : auth()->user()->roles;
+        $permissions = auth()->id() === User::ADMIN ? Permission::all() : auth()->user()->permissions;
+
         return view('users.role',compact('user', 'roles', 'permissions'));
     }
     public function edit(User $user)
     {
+        $this->authorize('users.edit');
+
         return view('users.edit',compact('user'));
     }
 
     public function update(Request $request, User $user)
     {
+        $this->authorize('users.edit');
+
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$user->id,
@@ -75,6 +88,8 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        $this->authorize('users.destroy');
+
         if($user->hasRole('admin')){
             return redirect()->route('users.index')->with('warning','Você é um administrador.');
         }
@@ -94,7 +109,6 @@ class UserController extends Controller
 
         $roles = $user->roles;
         //dd($roles);
-        //remove roles user
         if($roles){
             foreach($roles as $role) {
                 if($user->hasRole($role)){
@@ -104,16 +118,18 @@ class UserController extends Controller
         }
 
         //dd($request->role);
-        // add roles user
+        $message['success'] = "Papél atualizado.";
         if($request->role){
             foreach($request->role as $role) {
                 if(!$user->hasRole($role)){
                     $user->assignRole($role);
+                } else {
+                    $message['warning'] = "Papél $role já está atribuída.";
                 }
             }
         }
 
-        return redirect()->route('users.show', $user->id)->with('success','Registro adicionado.');
+        return redirect()->route('users.show', $user->id)->with($message);
     }
 
     public function givePermission(Request $request, User $user)
@@ -130,23 +146,18 @@ class UserController extends Controller
         }
 
         //dd($request->permissions);
+        $message['success'] = "Permissão atualizado.";
         if($request->permissions){
             foreach($request->permissions as $permission){
-                $user->givePermissionTo($permission);
+                if(!$user->hasPermissionTo($permission)){
+                    $user->givePermissionTo($permission);
+                } else {
+                    $message['warning'] = "Permissão $permission já está atribuída.";
+                }
             }
         }
 
-        return redirect()->route('users.show', $user->id)->with('success','Registro adicionado.');
+        return redirect()->route('users.show', $user->id)->with($message);
     }
 
-    public function revokePermission(User $user, Permission $permission)
-    {
-        $this->authorize('permissions-update');
-
-        if($user->hasPermissionTo($permission)){
-            $user->revokePermissionTo($permission);
-            return redirect()->route('users.show', $user->id)->with('success','Registro removido.');
-        }
-        return redirect()->route('users.show', $user->id)->with('warning','Registro não existe.');
-    }
 }

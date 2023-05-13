@@ -11,6 +11,7 @@
                 <strong>Name:</strong> {{ $user->name }} <br>
                 <strong>E-mail:</strong> {{ $user->email }} <br>
                 <strong>Papéis:</strong><br>
+                @if($user->roles->count() > 0)
                 <ul>
                     @foreach ( $user->roles as $role )
                         <li >
@@ -23,14 +24,18 @@
                         </li>
                     @endforeach
                 </ul>
-                <strong>Permissões:</strong><br>
-                <ul>
-                    @foreach ( $user->permissions as $permission )
-                        <li >
-                            {{ $permission->name }}
-                        </li>
-                    @endforeach
-                </ul>
+                @endif
+
+                @if($user->permissions->count() > 0)
+                    <strong>Permissões:</strong><br>
+                    <ul>
+                        @foreach ( $user->permissions as $permission )
+                            <li >
+                                {{ $permission->name }}
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
             </div>
         </div>
     </div>
@@ -48,21 +53,13 @@
                         @csrf
                         @method('POST')
                         <div class="py-3">
-                            @foreach ($roles as $role)
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="{{ $role->name }}"
-                                        name="role[]"
-                                        @if ($user->roles->contains($role)) checked @endif
-                                        >
-                                    <label class="form-check-label" for="role">
-                                        {{ $role->name }}
-                                    </label>
-                                </div>
-                            @endforeach
+
+                            <x-checkbox-access name="role" :rows="$roles" :contains="$user->roles"></x-checkbox-access>
 
                             <div class="d-flex justify-content-between mt-3">
                                 <button type="submit" class="btn btn-success">{{ __('Save Role') }}</button>
                             </div>
+
                         </div>
                     </form>
                 </div>
@@ -83,15 +80,8 @@
                         @csrf
                         @method('POST')
                         <div class="py-3">
-                            @foreach ($permissions as $permission)
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="{{ $permission->name }}"
-                                        name="permissions[]" @if ($user->permissions->contains($permission)) checked @endif>
-                                    <label class="form-check-label" >
-                                        {{ $permission->name }}
-                                    </label>
-                                </div>
-                            @endforeach
+
+                            <x-checkbox-access name="permissions" :rows="$permissions" :contains="$user->permissions"></x-checkbox-access>
 
                             <div class="d-flex justify-content-between mt-3">
                                 <button type="submit" class="btn btn-success">{{ __('Save Permission') }}</button>

@@ -7,7 +7,7 @@
             <h2>{{ __('User Management') }}</h2>
         </div>
         <div class="pull-right">
-            @can('users-create')
+            @can('users.create')
                 <a class="btn btn-primary" href="{{ route('users.create') }}"> {{ __('New record') }}</a>
             @endcan
         </div>

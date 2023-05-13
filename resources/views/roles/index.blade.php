@@ -7,7 +7,9 @@
             <h2>{{ __('Role Management') }}</h2>
         </div>
         <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('roles.create') }}"> {{ __('New record') }}</a>
+            @can('roles.create')
+                <a class="btn btn-primary" href="{{ route('roles.create') }}"> {{ __('New record') }}</a>
+            @endcan
         </div>
     </div>
 </div>

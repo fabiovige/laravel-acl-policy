@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -11,11 +12,9 @@ class RoleController extends Controller
 
     public function index(Request $request)
     {
-        $roles = Role::whereNotIn('name', ['admin'])->get();
-        $data = [
-            'roles' => $roles,
-        ];
-        return view('roles.index', $data);
+        $roles = auth()->id() === User::ADMIN ? Role::all() : auth()->user()->roles;
+
+        return view('roles.index', compact('roles'));
     }
 
     public function create()

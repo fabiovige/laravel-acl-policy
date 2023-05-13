@@ -7,14 +7,21 @@
                         <tr>
                             <th scope="col" style="width: 50px">#</th>
                             <th scope="col">Nome</th>
-                                <th scope="col">
-                                    @if($route == 'roles')
-                                        {{ __('Permissions') }}
-                                    @else
-                                        {{ __('Roles') }}
-                                    @endif
-                                </th>
-                                <th scope="col" style="width: 100px">Ações</th>
+
+                            @if($route == 'users')
+                                <th scope="col">{{ __('Roles') }}</th>
+                                <th scope="col">{{ __('Permissions') }}</th>
+                            @endif
+
+                            @if($route == 'roles')
+                                <th scope="col">{{ __('Permissions') }}</th>
+                            @endif
+
+                            @if($route == 'permissions')
+                                <th scope="col">{{ __('Roles') }}</th>
+                            @endif
+
+                            <th scope="col" style="width: 100px"></th>
 
                         </tr>
                     </thead>
@@ -24,6 +31,48 @@
                                 <tr>
                                     <th scope="row" style="white-space: nowrap">{{ $row->id }}</th>
                                     <td>{{ $row->name }}</td>
+                                    @if($route == 'users')
+                                        <td>
+                                            @if($row->roles)
+                                            <ul>
+                                                @foreach ( $row->roles as $role )
+                                                    <li>
+                                                        {{ $role->name }}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                        </td>
+                                        <td>
+                                            @if($row->permissions)
+                                            <ul>
+                                                @foreach ( $row->permissions as $permission )
+                                                    <li>
+                                                        {{ $permission->name }}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                        </td>
+                                    @endif
+
+                                    @if($route == 'roles')
+                                    <td>
+
+
+                                        @if($row->permissions)
+                                        <ul>
+                                            @foreach ( $row->permissions as $permission )
+                                                <li>
+                                                    {{ $permission->name }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                    </td>
+                                    @endif
+
+                                    @if($route == 'permissions')
                                     <td>
                                         @if($row->roles)
                                             <ul>
@@ -34,24 +83,15 @@
                                                 @endforeach
                                             </ul>
                                         @endif
-
-                                        @if($row->permissions)
-                                            <ul>
-                                                @foreach ( $row->permissions as $permission )
-                                                    <li>
-                                                        {{ $permission->name }}
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        @endif
                                     </td>
+                                    @endif
 
 
                                     <td class="" style="white-space: nowrap;">
 
                                         @if($route=='users')
                                             @can("$route.show")
-                                                <a href="{{route($route.'.show', $row->id)}}" class="btn btn-dark ">{{ __('Roles') }}</a>
+                                                <a href="{{route($route.'.show', $row->id)}}" class="btn btn-dark ">{{ __('Access') }}</a>
                                             @endcan
                                         @endif
 

@@ -29,32 +29,20 @@
                     </form>
                     <hr>
                     <div class="row mt-3">
-                        <h4>Permissões:</h4>
+                        <h4>{{ __('Permissions') }}</h4>
 
                         <form action="{{ route('roles.permissions', $role->id) }}" method="POST">
                             @csrf
                             @method('POST')
 
-                            @foreach ($permissions as $permission)
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="{{ $permission->name }}"
-                                        name="permission[]" @if ($role->permissions->contains($permission)) checked @endif>
-                                    <label class="form-check-label" for="permission">
-                                        {{ $permission->name }}
-                                    </label>
-                                </div>
-                            @endforeach
+
+                            <x-checkbox-access name="permission" :rows="$permissions" :contains="$role->permissions"></x-checkbox-access>
 
                             <div class="d-flex justify-content-between mt-3">
                                 <button type="submit" class="btn btn-success">{{ __('Save Permission') }}</button>
                             </div>
-
                         </form>
-                        
                     </div>
-
-
-
                 </div>
             </div>
         </div>

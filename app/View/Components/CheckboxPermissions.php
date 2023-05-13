@@ -5,18 +5,18 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class ListPermissions extends Component
+class CheckboxPermissions extends Component
 {
-    public $route = '';
-    public $rows = '';
+    public $role = '';
+    public $permissions = '';
 
     /**
      * Create a new component instance.
      */
-    public function __construct($rows, $route)
+    public function __construct($permissions, $role)
     {
-        $this->rows = $rows;
-        $this->route = $route;
+        $this->permissions = $permissions;
+        $this->role = $role;
     }
 
     /**
@@ -24,6 +24,6 @@ class ListPermissions extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.table');
+        return view('components.checkbox-permissions');
     }
 }

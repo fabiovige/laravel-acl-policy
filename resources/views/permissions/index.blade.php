@@ -7,7 +7,9 @@
             <h2>{{ __('Permission Management') }}</h2>
         </div>
         <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('permissions.create') }}"> {{ __('New record') }}</a>
+            @can('permissions.create')
+                <a class="btn btn-primary" href="{{ route('permissions.create') }}"> {{ __('New record') }}</a>
+            @endcan
         </div>
     </div>
 </div>
