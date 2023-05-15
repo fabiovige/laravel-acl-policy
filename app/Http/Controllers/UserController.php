@@ -15,11 +15,13 @@ class UserController extends Controller
     {
         $this->authorize('users.index');
 
+        //dd(auth()->user()->can('users.all'));
+
         if(auth()->id() === User::ADMIN) {
              $users = User::all();
-        } else if(auth()->user()->can('users.edit.all')) {
-            $users = User::where('user_id', auth()->user()->user_id)->get();
-        }else {
+        } else if(auth()->user()->can('users.all')) {
+            $users = User::where('user_id', auth()->user()->user_id)->orWhere('user_id', auth()->id())->get();
+        }else  {
             $users = User::where('user_id', auth()->id())->get();
         }
         return view('users.index', compact('users'));

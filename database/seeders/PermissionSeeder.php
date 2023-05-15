@@ -31,6 +31,7 @@ class PermissionSeeder extends Seeder
             'users.destroy',
             'users.roles.edit',
             'users.permissions.edit',
+            'users.all',
             'clients.index',
             'clients.create',
             'clients.edit',
