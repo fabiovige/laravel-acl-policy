@@ -9,6 +9,7 @@
                             <th scope="col">Nome</th>
 
                             @if($route == 'users')
+                                <th scope="col">{{ __('Blocked') }}</th>
                                 <th scope="col">{{ __('Roles') }}</th>
                                 <th scope="col">{{ __('Permissions') }}</th>
                             @endif
@@ -32,6 +33,7 @@
                                     <th scope="row" style="white-space: nowrap">{{ $row->id }}</th>
                                     <td>{{ $row->name }}</td>
                                     @if($route == 'users')
+                                        <td>{{ $row->is_blocked }}</td>
                                         <td>
                                             @if($row->roles)
                                             <ul>

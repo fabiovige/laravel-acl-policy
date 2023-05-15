@@ -90,12 +90,16 @@ class UserController extends Controller
         ]);
 
         $input = $request->all();
+
         if(!empty($input['password'])){
             $input['password'] = Hash::make($input['password']);
         }else{
             $input = Arr::except($input,array('password'));
         }
-
+        $input['is_blocked'] = false;
+        if(isset($request->is_blocked)){
+            $input['is_blocked'] = true;
+        }
         $user->update($input);
 
         return redirect()->route('users.index')->with('success','Registro atualizado.');

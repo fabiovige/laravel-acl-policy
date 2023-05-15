@@ -41,6 +41,19 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="1" name="is_blocked" @if($user->is_blocked) checked @endif >
+                        <label class="form-check-label" >
+                          {{ __('Blocked')}}
+                        </label>
+                      </div>
+
+                </div>
+
+
                 <button type="submit" class="btn btn-success">{{ __('Save') }}</button>
             </form>
         </div>
