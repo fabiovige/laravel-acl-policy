@@ -15,13 +15,28 @@ class UserController extends Controller
     {
         $this->authorize('users.index');
 
-        if(auth()->user()->hasRole('admin')){
-            $users = User::all();
-        } else {
-            $users = User::where('id','!=',1)->get();
+        if(auth()->id() === User::ADMIN) {
+             $users = User::all();
+        } else if(auth()->user()->can('users.edit.all')) {
+            $users = User::where('user_id', auth()->user()->user_id)->get();
+        }else {
+            $users = User::where('user_id', auth()->id())->get();
         }
         return view('users.index', compact('users'));
     }
+
+
+    public function obterIdsFilhos($usuarios)
+    {
+        $idsFilhos = [];
+        foreach ($usuarios as $usuario) {
+            $idsFilhos[] = $usuario->id;
+            $filhos = User::where('user_id', $usuario->id)->get();
+            $idsFilhos = array_merge($idsFilhos, $this->obterIdsFilhos($filhos));
+        }
+        return $idsFilhos;
+    }
+
 
     public function create()
     {
@@ -53,7 +68,7 @@ class UserController extends Controller
         $this->authorize('users.show');
 
         $roles = auth()->id() === User::ADMIN ? Role::all() : auth()->user()->roles;
-        $permissions = auth()->id() === User::ADMIN ? Permission::all() : auth()->user()->permissions;
+        $permissions = auth()->id() === User::ADMIN ? Permission::all() : auth()->user()->getAllPermissions();
 
         return view('users.role',compact('user', 'roles', 'permissions'));
     }
@@ -95,7 +110,7 @@ class UserController extends Controller
         }
 
         if($user->id === auth()->id()){
-            return redirect()->route('users.index')->with('warning','Permissão negada.');
+            return redirect()->route('users.index')->with('warning','Informe seu administrador para que realize esta operação.');
         }
 
         $user->delete();

@@ -101,14 +101,11 @@
 
                                         @can("$route.destroy")
 
-
-                                        <a class="btn btn-danger " href="#"
-                                        onclick="event.preventDefault();
-                                                      document.getElementById('remove-form').submit();">
+                                        <a class="btn btn-danger " href="{{route($route.'.destroy', $row->id)}}" onclick="event.preventDefault(); document.getElementById('remove-form-{{$row->id}}').submit();">
                                          {{ __('Remove') }}
                                         </a>
 
-                                        <form id="remove-form" action="{{route($route.'.destroy', $row->id)}}" method="POST" class="d-none">
+                                        <form id="remove-form-{{$row->id}}" action="{{route($route.'.destroy', $row->id)}}" method="POST" class="d-none">
                                             @csrf
                                             @method("DELETE")
                                         </form>
@@ -120,7 +117,7 @@
                             @endforeach
                         @else
                             <tr class="table-warning">
-                                <td colspan="3">Nenhum registro encontrado!</td>
+                                <td colspan="4">{{ __('Not found record') }}</td>
                             </tr>
                         @endif
                     </tbody>

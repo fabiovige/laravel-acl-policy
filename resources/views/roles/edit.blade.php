@@ -41,6 +41,7 @@
                             <div class="d-flex justify-content-between mt-3">
                                 <button type="submit" class="btn btn-success">{{ __('Save Permission') }}</button>
                             </div>
+                            
                         </form>
                     </div>
                 </div>

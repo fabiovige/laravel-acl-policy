@@ -10,8 +10,8 @@
                 <h4>Dados do usuário</h4>
                 <strong>Name:</strong> {{ $user->name }} <br>
                 <strong>E-mail:</strong> {{ $user->email }} <br>
-                <strong>Papéis:</strong><br>
                 @if($user->roles->count() > 0)
+                <strong>Papéis:</strong><br>
                 <ul>
                     @foreach ( $user->roles as $role )
                         <li >
