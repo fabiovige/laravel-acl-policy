@@ -1,66 +1,29 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Role-Based Access Control (RBAC) com Laravel e Spatie
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+O Role-Based Access Control (RBAC) é um modelo de controle de acesso baseado em funções que ajuda a gerenciar as permissões de acesso dos usuários em um sistema. Ele permite que você defina funções ou papéis para os usuários e atribua permissões a esses papéis, facilitando o controle granular do acesso aos recursos do sistema.
 
-## About Laravel
+Este projeto é um exemplo de como implementar o RBAC usando Laravel, um framework PHP popular, juntamente com a biblioteca Spatie Laravel Permission para facilitar a implementação do RBAC.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Configuração
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. Clone este repositório para sua máquina local.
+2. Execute o comando `composer install` para instalar as dependências do Laravel e do Spatie Laravel Permission.
+3. Crie um banco de dados MySQL e configure as credenciais de acesso no arquivo `.env`.
+4. Execute o comando `php artisan migrate` para executar as migrações do banco de dados.
+5. Execute o comando `php artisan db:seed` para popular o banco de dados com dados de exemplo.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Funcionalidades
 
-## Learning Laravel
+- Autenticação de usuário: O projeto já possui um sistema básico de autenticação implementado com Laravel.
+- Gerenciamento de papéis e permissões: Você pode criar, editar e excluir papéis e permissões no sistema.
+- Atribuição de papéis aos usuários: Os usuários podem ser atribuídos a um ou mais papéis para definir suas permissões.
+- Middleware de autorização: O projeto inclui um middleware que pode ser aplicado a rotas para verificar se o usuário possui as permissões necessárias para acessá-las.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Uso
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- Faça login como administrador usando as credenciais de administrador fornecidas (geralmente, um usuário com o papel "admin" é criado durante a execução das sementes).
+- Acesse a página de gerenciamento de papéis e permissões no painel administrativo.
+- Crie os papéis necessários para o seu sistema e atribua as permissões correspondentes a cada papel.
+- Atribua os papéis aos usuários conforme necessário.
+- Utilize o middleware de autorização para proteger as rotas que requerem permissões específicas.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
