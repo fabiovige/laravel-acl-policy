@@ -14,7 +14,7 @@ class RoleController extends Controller
     {
         $this->authorize('roles.index');
 
-        $roles = auth()->id() === User::ADMIN ? Role::all() : Role::whereNotIn('name', ['admin'])->get();
+        $roles = auth()->id() === User::ADMIN ? Role::all() : auth()->user()->roles;
 
         return view('roles.index', compact('roles'));
     }
@@ -33,27 +33,23 @@ class RoleController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'min:3', 'unique:roles,name'],
         ]);
-        Role::create($validated);
+        $role = Role::create($validated);
+        auth()->user()->assignRole($role);
+
         return redirect()->route('roles.index')->with('success','Registro adicionado.');
     }
 
-    public function show(string $id)
+    public function show(Role $id)
     {
         $this->authorize('roles.show');
 
-        $role = Role::find($id);
-        $rolePermissions = Permission::join("role_has_permissions","role_has_permissions.permission_id","=","permissions.id")
-            ->where("role_has_permissions.role_id",$id)
-            ->get();
-
-        return view('roles.show',compact('role','rolePermissions'));
     }
 
     public function edit(Role $role)
     {
         $this->authorize('roles.edit');
 
-        $permissions = Permission::all();
+        $permissions = auth()->id() === User::ADMIN ? Permission::all() : auth()->user()->getAllPermissions();
 
         return view('roles.edit',compact('role','permissions'));
     }
@@ -76,7 +72,6 @@ class RoleController extends Controller
         if(in_array($role->name,auth()->user()->roles->pluck('name')->toArray())){
             return redirect()->route('roles.index')->with('warning','Nao é possível remover esse papél porque está em uso na sua sessão!');
         }
-
 
         $role->delete();
         return redirect()->route('roles.index')->with('success','Registro removido.');

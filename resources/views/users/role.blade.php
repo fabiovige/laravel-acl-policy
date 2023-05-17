@@ -42,56 +42,69 @@
 </div>
 
 @can('users.roles.edit')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
+    @if(auth()->user()->roles->count() > 0 || auth()->user()->isAdmin())
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
 
-                    <h4>{{ __('Roles') }}</h4>
+                        <h4>{{ __('Roles') }}</h4>
 
-                    <form action="{{ route('users.roles', $user->id) }}" method="POST">
-                        @csrf
-                        @method('POST')
-                        <div class="py-3">
+                        <form action="{{ route('users.roles', $user->id) }}" method="POST">
+                            @csrf
+                            @method('POST')
+                            <div class="py-3">
 
-                            <x-checkbox-access name="role" :rows="$roles" :contains="$user->roles"></x-checkbox-access>
+                                <x-checkbox-access name="role" :rows="$roles" :contains="$user->roles"></x-checkbox-access>
 
-                            <div class="d-flex justify-content-between mt-3">
-                                <button type="submit" class="btn btn-success">{{ __('Save Role') }}</button>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <button type="submit" class="btn btn-success">{{ __('Save Role') }}</button>
+                                </div>
+
                             </div>
-
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 @endcan
 
 @can('users.permissions.edit')
-    <div class="row py-3">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
+    @if(auth()->user()->permissions->count() > 0 || auth()->user()->isAdmin())
+        <div class="row py-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
 
-                    <h4>{{ __('Permissions') }}</h4>
+                        <h4>{{ __('Permissions') }}</h4>
 
-                    <form action="{{ route('users.permissions', $user->id) }}" method="POST">
-                        @csrf
-                        @method('POST')
-                        <div class="py-3">
+                        <form action="{{ route('users.permissions', $user->id) }}" method="POST">
+                            @csrf
+                            @method('POST')
+                            <div class="py-3">
 
-                            <x-checkbox-access name="permissions" :rows="$permissions" :contains="$user->permissions"></x-checkbox-access>
+                                <x-checkbox-access name="permissions" :rows="$permissions" :contains="$user->permissions"></x-checkbox-access>
 
-                            <div class="d-flex justify-content-between mt-3">
-                                <button type="submit" class="btn btn-success">{{ __('Save Permission') }}</button>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <button type="submit" class="btn btn-success">{{ __('Save Permission') }}</button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 @endcan
+
+@push('scripts')
+    <script>
+        function getValue(checkbox) {
+            var valor = checkbox.checked ? 1 : 0;
+            console.log(valor);
+        }
+    </script>
+@endpush
 
 @endsection

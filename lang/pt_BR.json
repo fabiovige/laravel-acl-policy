@@ -143,5 +143,9 @@
     "Save Role": "Salvar papéis",
     "Access": "Acessos",
     "Not found record": "Nenhum registro encontrado",
-    "Blocked": "Bloqueado"
+    "Blocked": "Bloqueado",
+    "You do not own this user": "Voce não pode remover este usuário",
+    "You cannot edit this user": "Voce não pode editar este usuário",
+    "Users": "Usuários",
+    "Clients": "Clientes"
 }

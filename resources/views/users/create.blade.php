@@ -27,7 +27,7 @@
                 <div class="mb-3">
                     <label for="password" class="form-label">{{ __('Password') }}</label>
                     <input type="password" class="form-control @error('password') is-invalid @enderror " id="password"
-                        name="password" value="{{ old('password') }}">
+                        name="password" value="password">
                     @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -35,7 +35,7 @@
                 <div class="mb-3">
                     <label for="confirm-password" class="form-label">{{ __('Confirm Password') }}</label>
                     <input type="password" class="form-control @error('confirm-password') is-invalid @enderror"
-                        id="confirm-password" name="confirm-password" value="{{ old('confirm-password') }}">
+                        id="confirm-password" name="confirm-password" value="password">
                     @error('confirm-password')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

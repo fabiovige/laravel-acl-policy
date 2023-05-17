@@ -15,30 +15,45 @@ class UserController extends Controller
     {
         $this->authorize('users.index');
 
-        //dd(auth()->user()->can('users.all'));
-
         if(auth()->id() === User::ADMIN) {
              $users = User::all();
-        } else if(auth()->user()->can('users.all')) {
-            $users = User::where('user_id', auth()->user()->user_id)->orWhere('user_id', auth()->id())->get();
+        } elseif(auth()->user()->can('users.owner.all')) {
+
+            $usuarios = User::where('user_id', auth()->user()->user_id)->get();
+            $idsUsuarios = [];
+            foreach ($usuarios as $usuario) {
+                $idsUsuarios[] = $usuario->id;
+            }
+            $idsFilhos = $this->obterIdsFilhos($usuarios);
+            $users = User::whereIn('id', $idsFilhos)->get();
+
+        } elseif(auth()->user()->can('users.children.all')) {
+
+            $usuarios = User::where('user_id', auth()->id())->get();
+            $idsUsuarios = [];
+            foreach ($usuarios as $usuario) {
+                $idsUsuarios[] = $usuario->id;
+            }
+            $idsFilhos = $this->obterIdsFilhos($usuarios);
+            $users = User::whereIn('id', $idsFilhos)->get();
+
         }else  {
             $users = User::where('user_id', auth()->id())->get();
         }
+
         return view('users.index', compact('users'));
     }
 
-
-    public function obterIdsFilhos($usuarios)
+    private function obterIdsFilhos($usuarios)
     {
         $idsFilhos = [];
-        foreach ($usuarios as $usuario) {
-            $idsFilhos[] = $usuario->id;
-            $filhos = User::where('user_id', $usuario->id)->get();
+        foreach ($usuarios as $user) {
+            $idsFilhos[] = $user->id;
+            $filhos = User::where('user_id', $user->id)->get();
             $idsFilhos = array_merge($idsFilhos, $this->obterIdsFilhos($filhos));
         }
         return $idsFilhos;
     }
-
 
     public function create()
     {
@@ -54,11 +69,10 @@ class UserController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
         ]);
 
         $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
+        $input['password'] = Hash::make('password');
         $input['user_id'] = auth()->id();
 
         $user = User::create($input);
@@ -67,7 +81,7 @@ class UserController extends Controller
     }
     public function show(User $user)
     {
-        $this->authorize('users.show');
+        $this->authorize('users.roles.edit');
 
         $roles = auth()->id() === User::ADMIN ? Role::all() : auth()->user()->roles;
         $permissions = auth()->id() === User::ADMIN ? Permission::all() : auth()->user()->getAllPermissions();
@@ -98,10 +112,12 @@ class UserController extends Controller
         }else{
             $input = Arr::except($input,array('password'));
         }
+
         $input['is_blocked'] = false;
         if(isset($request->is_blocked)){
             $input['is_blocked'] = true;
         }
+
         $user->update($input);
 
         return redirect()->route('users.index')->with('success','Registro atualizado.');
@@ -111,7 +127,7 @@ class UserController extends Controller
     {
         $this->authorize('users.destroy');
 
-        if($user->hasRole('admin')){
+        if(auth()->id() === User::ADMIN){
             return redirect()->route('users.index')->with('warning','Você é um administrador.');
         }
 
@@ -119,7 +135,7 @@ class UserController extends Controller
             return redirect()->route('users.index')->with('warning','Informe seu administrador para que realize esta operação.');
         }
 
-        $user->delete();
+        //$user->delete();
 
         return redirect()->route('users.index')->with('success','Usuário removido.');
     }
@@ -128,9 +144,8 @@ class UserController extends Controller
     {
         $this->authorize('users.roles.edit');
 
-        $roles = $user->roles;
-        //dd($roles);
-        if($roles){
+        if(is_null($request->role)){
+            $roles = auth()->user()->roles;
             foreach($roles as $role) {
                 if($user->hasRole($role)){
                     $user->removeRole($role);
@@ -138,8 +153,17 @@ class UserController extends Controller
             }
         }
 
-        //dd($request->role);
+        $roles = $user->roles;
+        if($roles){
+            foreach($roles as $role) {
+                if(!$user->hasRole($role)){
+                    $user->removeRole($role);
+                }
+            }
+        }
+
         $message['success'] = "Papél atualizado.";
+        //dd($request->all());
         if($request->role){
             foreach($request->role as $role) {
                 if(!$user->hasRole($role)){
@@ -157,7 +181,15 @@ class UserController extends Controller
     {
         $this->authorize('users.permissions.edit');
 
-        //dd($user->permissions);
+        if(is_null($request->permissions)){
+            $permissions = auth()->user()->permissions;
+            foreach($user->permissions as $permission){
+                if($user->hasPermissionTo($permission)){
+                    $user->revokePermissionTo($permission);
+                }
+            }
+        }
+
         if($user->permissions){
             foreach($user->permissions as $permission){
                 if($user->hasPermissionTo($permission)){
@@ -166,7 +198,6 @@ class UserController extends Controller
             }
         }
 
-        //dd($request->permissions);
         $message['success'] = "Permissão atualizado.";
         if($request->permissions){
             foreach($request->permissions as $permission){

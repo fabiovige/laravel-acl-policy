@@ -3,28 +3,21 @@
     @can('users.index')
     <li class="nav-item">
         <a class="nav-link @if (request()->is('users*')) active @endif" aria-current="page"
-            href="{{ route('users.index') }}">Usuários</a>
+            href="{{ route('users.index') }}"> {{ __('Users') }} </a>
     </li>
     @endcan
 
     @can('roles.index')
     <li class="nav-item">
         <a class="nav-link @if (request()->is('roles*')) active @endif" aria-current="page"
-            href="{{ route('roles.index') }}">Papéis</a>
-    </li>
-    @endcan
-
-    @can('permissions.index')
-    <li class="nav-item">
-        <a class="nav-link @if (request()->is('permissions*')) active @endif" aria-current="page"
-            href="{{ route('permissions.index') }}">Permissões</a>
+            href="{{ route('roles.index') }}">{{ __('Roles') }}</a>
     </li>
     @endcan
 
     @can('clients.index')
     <li class="nav-item">
         <a class="nav-link @if (request()->is('clients*')) active @endif" aria-current="page"
-            href="{{ route('clients.index') }}">Clientes</a>
+            href="{{ route('clients.index') }}">{{ __('Clients') }}</a>
     </li>
     @endcan
 
