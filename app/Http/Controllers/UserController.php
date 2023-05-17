@@ -18,25 +18,9 @@ class UserController extends Controller
         if(auth()->id() === User::ADMIN) {
              $users = User::all();
         } elseif(auth()->user()->can('users.owner.all')) {
-
-            $usuarios = User::where('user_id', auth()->user()->user_id)->get();
-            $idsUsuarios = [];
-            foreach ($usuarios as $usuario) {
-                $idsUsuarios[] = $usuario->id;
-            }
-            $idsFilhos = $this->obterIdsFilhos($usuarios);
-            $users = User::whereIn('id', $idsFilhos)->get();
-
+            $users = $this->getUsers(auth()->user()->user_id);
         } elseif(auth()->user()->can('users.children.all')) {
-
-            $usuarios = User::where('user_id', auth()->id())->get();
-            $idsUsuarios = [];
-            foreach ($usuarios as $usuario) {
-                $idsUsuarios[] = $usuario->id;
-            }
-            $idsFilhos = $this->obterIdsFilhos($usuarios);
-            $users = User::whereIn('id', $idsFilhos)->get();
-
+            $users = $this->getUsers(auth()->id());
         }else  {
             $users = User::where('user_id', auth()->id())->get();
         }
@@ -44,13 +28,25 @@ class UserController extends Controller
         return view('users.index', compact('users'));
     }
 
-    private function obterIdsFilhos($usuarios)
+    private function getUsers($id)
+    {
+        $usuarios = User::where('user_id', $id)->get();
+        $idsUsuarios = [];
+        foreach ($usuarios as $usuario) {
+            $idsUsuarios[] = $usuario->id;
+        }
+        $idsFilhos = $this->getIdsChildrens($usuarios);
+        $users = User::whereIn('id', $idsFilhos)->get();
+        return $users;
+    }
+
+    private function getIdsChildrens($usuarios)
     {
         $idsFilhos = [];
         foreach ($usuarios as $user) {
             $idsFilhos[] = $user->id;
             $filhos = User::where('user_id', $user->id)->get();
-            $idsFilhos = array_merge($idsFilhos, $this->obterIdsFilhos($filhos));
+            $idsFilhos = array_merge($idsFilhos, $this->getIdsChildrens($filhos));
         }
         return $idsFilhos;
     }
@@ -135,7 +131,7 @@ class UserController extends Controller
             return redirect()->route('users.index')->with('warning','Informe seu administrador para que realize esta operação.');
         }
 
-        //$user->delete();
+        $user->delete();
 
         return redirect()->route('users.index')->with('success','Usuário removido.');
     }
