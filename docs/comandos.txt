@@ -1,0 +1,5 @@
+git tag -a 1.0.git status1 -m "Gerenciamento de Papéis e Usuários 1.0.1"
+
+git push --tags
+
+php artisan storage:link
