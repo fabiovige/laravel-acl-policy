@@ -1,4 +1,4 @@
-git tag -a 1.0.git -m "Gerenciamento de Papéis e Usuários 1.0.1"
+git tag -a 1.0.1 -m "Gerenciamento de Papéis e Usuários 1.0.1"
 
 git push --tags
 

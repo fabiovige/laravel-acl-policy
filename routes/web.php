@@ -46,4 +46,5 @@ Route::group(['middleware' => ['auth']], function() {
 
     // clients
     Route::resource('/clients', ClientController::class);
+    Route::get('/clients/cnpj/{cnpj}', [ClientController::class, 'getCnpj'])->name('clients.cnpj');
 });

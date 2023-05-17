@@ -147,5 +147,6 @@
     "You do not own this user": "Voce não pode remover este usuário",
     "You cannot edit this user": "Voce não pode editar este usuário",
     "Users": "Usuários",
-    "Clients": "Clientes"
+    "Clients": "Clientes",
+    "Client created successfully": "Cliente cadastrado com sucesso"
 }

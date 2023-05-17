@@ -10,9 +10,18 @@ class Client extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'phone',
-        'user_id',
+        'corporate_name',
+        'cnpj',
+        'responsible_name',
+        'cell_phone',
+        'email',
+        'zip_code',
+        'address',
+        'number',
+        'complement',
+        'neighborhood',
+        'city',
+        'state',
     ];
 
     public function user()
@@ -20,9 +29,4 @@ class Client extends Model
         return $this->belongsTo(User::class);
     }
 
-    public static function getAll()
-    {
-        $perfil = auth()->user()->perfil();
-        return $perfil === 'Admin' ? self::all() : self::where('user_id', '=', auth()->id())->get();
-    }
 }

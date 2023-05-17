@@ -14,8 +14,19 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('name', 50);
-            $table->char('phone', 11);
+            $table->string('corporate_name', 150);
+            $table->string('cnpj', 14);
+            $table->string('responsible_name', 50);
+            $table->string('cell_phone', 11);
+            $table->string('email', 150);
+            $table->string('zip_code', 8);
+            $table->string('address', 200);
+            $table->string('number', 9);
+            $table->string('complement', 60);
+            $table->string('neighborhood', 100);
+            $table->string('city', 50);
+            $table->string('state', 2);
+
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

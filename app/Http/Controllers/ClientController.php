@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client as ClientHttp;
 
 class ClientController extends Controller
 {
@@ -13,9 +14,10 @@ class ClientController extends Controller
      */
     public function index()
     {
-        //$this->authorize('viewAny', Client::class);
+        $this->authorize('clients.index');
 
-        return view('clients.index');
+        $clients = Client::all();
+        return view('clients.index', compact('clients'));
     }
 
     /**
@@ -23,10 +25,9 @@ class ClientController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Client::class);
-        $users = User::pluck('name','id');
+        $this->authorize('clients.roles');
 
-        return view('clients.create',  );
+        return view('clients.create');
     }
 
     /**
@@ -34,11 +35,22 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', Client::class);
+        $this->authorize('clients.create');
 
         request()->validate([
-            'name' => 'required',
-            'phone' => 'required',
+            'user_id' => 'nullable',
+            'corporate_name' => 'required',
+            'cnpj'=> 'required|cnpj',
+            'responsible_name' => 'required',
+            'cell_phone' => 'required',
+            'email' => 'required|email',
+            'zip_code' => 'required',
+            'address' => 'required',
+            'number' => 'required',
+            'complement' => 'required',
+            'neighborhood' => 'required',
+            'city'=> 'required',
+            'state'=> 'required|uf',
         ]);
 
         $data = $request->all();
@@ -46,8 +58,7 @@ class ClientController extends Controller
 
         Client::create($data);
 
-        return redirect()->route('clients.index')
-                        ->with('success','Client created successfully.');
+        return redirect()->route('clients.index')->with('success', __('Client created successfully'));
     }
 
     /**
@@ -57,7 +68,7 @@ class ClientController extends Controller
     {
         $this->authorize('view', $client);
 
-        return view('clients.show',compact('client'));
+        return view('clients.show', compact('client'));
     }
 
     /**
@@ -66,10 +77,10 @@ class ClientController extends Controller
     public function edit(Client $client)
     {
         $this->authorize('update', $client);
-        $users = User::pluck('name','id');
+        $users = User::pluck('name', 'id');
         $userClient = $client->user->id;
 
-        return view('clients.edit',compact('client', ));
+        return view('clients.edit', compact('client',));
     }
 
     /**
@@ -87,7 +98,7 @@ class ClientController extends Controller
         $client->update($request->all());
 
         return redirect()->route('clients.index')
-                        ->with('success','Client updated successfully');
+            ->with('success', 'Client updated successfully');
     }
 
     /**
@@ -100,6 +111,30 @@ class ClientController extends Controller
         $client->delete();
 
         return redirect()->route('clients.index')
-                        ->with('success','Client deleted successfully');
+            ->with('success', 'Client deleted successfully');
+    }
+
+    public function getCnpj($cnpj)
+    {
+        $clientHttp = new ClientHttp([
+            'verify' => false
+        ]);
+
+        //$cnpj = $request->all();
+        //dd($cnpj);
+
+        $url = 'https://www.receitaws.com.br/v1/cnpj/' . $cnpj;
+
+        try {
+            $response = $clientHttp->get($url);
+            $body = $response->getBody();
+            $dadosEmpresa = json_decode($body, true);
+
+            // Faça o tratamento dos dados recebidos aqui
+
+            return response()->json($dadosEmpresa);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro na consulta do CNPJ ' . $e->getMessage()], 500);
+        }
     }
 }
