@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('email', 150);
             $table->string('zip_code', 8);
             $table->string('address', 200);
-            $table->string('number', 9);
-            $table->string('complement', 60);
+            $table->string('number', 9)->nullable();
+            $table->string('complement', 60)->nullable();
             $table->string('neighborhood', 100);
             $table->string('city', 50);
             $table->string('state', 2);

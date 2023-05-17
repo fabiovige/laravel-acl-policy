@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <x-back title="Cadastro de usuários" route="users"></x-back>
+    <x-back title="Ediçao de usuários" route="users"></x-back>
 
     <div class="card">
         <div class="card-body">

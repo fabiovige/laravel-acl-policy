@@ -6,7 +6,7 @@
     <div class="card">
         <div class="card-body">
 
-            <form method="POST" action="{{ route('clients.store') }}" class="row g-3">
+            <form method="POST" action="{{ route('clients.store') }}" class="row">
                 @csrf
 
                 <h4>Dados da empresa</h4>
@@ -35,7 +35,7 @@
                     @enderror
                 </div>
 
-                <h4>Dados do Responsável</h4>
+                <h4 class="mt-3">Dados do Responsável</h4>
 
                 <!-- responsible_name -->
                 <div class="col-md-4">
@@ -67,7 +67,7 @@
                     @enderror
                 </div>
 
-                <h4>Endereço da Empresa</h4>
+                <h4 class="mt-3">Endereço da Empresa</h4>
                 <!-- zip_code -->
                 <div class="col-md-2">
                     <label for="zip_code" class="form-label">{{ __('Zip Code') }}</label>
@@ -110,7 +110,7 @@
 
 
                 <!-- neighborhood -->
-                <div class="col-md-4">
+                <div class="col-md-4 mt-3">
                     <label for="neighborhood" class="form-label">{{ __('Neighborhood') }}</label>
                     <input type="text" class="form-control @error('neighborhood') is-invalid @enderror"
                         name="neighborhood" id="neighborhood"  value="{{ old('neighborhood') }}" maxlength="50">
@@ -120,7 +120,7 @@
                 </div>
 
                 <!-- city -->
-                <div class="col-md-4">
+                <div class="col-md-4 mt-3">
                     <label for="city" class="form-label">{{ __('City') }}</label>
                     <input type="text" class="form-control @error('city') is-invalid @enderror" name="city"
                         id="city"  value="{{ old('city') }}" maxlength="25">
@@ -130,7 +130,7 @@
                 </div>
 
                 <!-- state -->
-                <div class="col-md-4">
+                <div class="col-md-4 mt-3">
                     <label for="state" class="form-label">{{ __('State') }}</label>
                     <input type="text" class="form-control @error('state') is-invalid @enderror" name="state"
                         id="state"  value="{{ old('state') }}" maxlength="2">
@@ -139,7 +139,7 @@
                     @enderror
                 </div>
 
-                <div class="col-12">
+                <div class="col-12 mt-3">
                     <button type="submit" class="btn btn-success">{{ __('Save') }}</button>
                 </div>
             </form>

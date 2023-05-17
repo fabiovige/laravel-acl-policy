@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClientFormRequest;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -33,25 +34,9 @@ class ClientController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ClientFormRequest $request)
     {
         $this->authorize('clients.create');
-
-        request()->validate([
-            'user_id' => 'nullable',
-            'corporate_name' => 'required',
-            'cnpj'=> 'required|cnpj',
-            'responsible_name' => 'required',
-            'cell_phone' => 'required',
-            'email' => 'required|email',
-            'zip_code' => 'required',
-            'address' => 'required',
-            'number' => 'required',
-            'complement' => 'required',
-            'neighborhood' => 'required',
-            'city'=> 'required',
-            'state'=> 'required|uf',
-        ]);
 
         $data = $request->all();
         $data['user_id'] = auth()->id();
@@ -76,29 +61,21 @@ class ClientController extends Controller
      */
     public function edit(Client $client)
     {
-        $this->authorize('update', $client);
-        $users = User::pluck('name', 'id');
-        $userClient = $client->user->id;
+        $this->authorize('clients.edit');
 
-        return view('clients.edit', compact('client',));
+        return view('clients.edit', compact('client'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Client $client)
+    public function update(ClientFormRequest $request, Client $client)
     {
-        $this->authorize('update', $client);
-
-        request()->validate([
-            'name' => 'required',
-            'phone' => 'required',
-        ]);
+        $this->authorize('clients.edit');
 
         $client->update($request->all());
 
-        return redirect()->route('clients.index')
-            ->with('success', 'Client updated successfully');
+        return redirect()->route('clients.index')->with('success', __('Client updated successfully'));
     }
 
     /**
@@ -106,12 +83,12 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
-        $this->authorize('delete', $client);
+        $this->authorize('clients.destroy');
 
         $client->delete();
 
         return redirect()->route('clients.index')
-            ->with('success', 'Client deleted successfully');
+            ->with('success', __("Client removed successfully"));
     }
 
     public function getCnpj($cnpj)
@@ -120,17 +97,12 @@ class ClientController extends Controller
             'verify' => false
         ]);
 
-        //$cnpj = $request->all();
-        //dd($cnpj);
-
         $url = 'https://www.receitaws.com.br/v1/cnpj/' . $cnpj;
 
         try {
             $response = $clientHttp->get($url);
             $body = $response->getBody();
             $dadosEmpresa = json_decode($body, true);
-
-            // Faça o tratamento dos dados recebidos aqui
 
             return response()->json($dadosEmpresa);
         } catch (\Exception $e) {
