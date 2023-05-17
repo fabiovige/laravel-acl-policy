@@ -27,3 +27,5 @@ Este projeto é um exemplo de como implementar o RBAC usando Laravel, um framewo
 - Atribua os papéis aos usuários conforme necessário.
 - Utilize o middleware de autorização para proteger as rotas que requerem permissões específicas.
 
+## Autor
+@fabiovige.com.br
