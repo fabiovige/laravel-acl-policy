@@ -33,14 +33,14 @@ class AuthServiceProvider extends ServiceProvider
             }
         });
 
-        $permissions = Permission::all();
-        if($permissions->count() > 0){
-            foreach ($permissions as $permission) {
-                Gate::define($permission->name, function (User $user) use ($permission) {
-                    return $permission->roles->contains($user->role);
-                });
-            }
-        }
+//        $permissions = Permission::all();
+//        if($permissions->count() > 0){
+//            foreach ($permissions as $permission) {
+//                Gate::define($permission->name, function (User $user) use ($permission) {
+//                    return $permission->roles->contains($user->role);
+//                });
+//            }
+//        }
 
         //dd(Gate::abilities());
     }

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ClientFormRequest;
+use App\Http\Requests\ClientStoreFormRequest;
+use App\Http\Requests\ClientUpdateFormRequest;
 use App\Models\Client;
-use App\Models\User;
-use Illuminate\Http\Request;
 use GuzzleHttp\Client as ClientHttp;
 
 class ClientController extends Controller
@@ -34,7 +34,7 @@ class ClientController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ClientFormRequest $request)
+    public function store(ClientStoreFormRequest $request)
     {
         $this->authorize('clients.create');
 
@@ -69,7 +69,7 @@ class ClientController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ClientFormRequest $request, Client $client)
+    public function update(ClientUpdateFormRequest $request, Client $client)
     {
         $this->authorize('clients.edit');
 

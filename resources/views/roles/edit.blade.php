@@ -13,11 +13,11 @@
                         <div class="mb-3">
                             <label for="name" class="form-label">Nome</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" name="name"
-                                value="{{ $role->name ?? old('name') }}" />
+                                   value="{{ $role->name ?? old('name') }}"/>
                             @error('name')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
                             @enderror
                         </div>
 
@@ -36,7 +36,8 @@
                             @method('POST')
 
 
-                            <x-checkbox-access name="permission" :rows="$permissions" :contains="$role->permissions"></x-checkbox-access>
+                            <x-checkbox-access name="permission" :rows="$permissions"
+                                               :contains="$role->permissions"></x-checkbox-access>
 
                             <div class="d-flex justify-content-between mt-3">
                                 <button type="submit" class="btn btn-success">{{ __('Save Permission') }}</button>
@@ -44,6 +45,25 @@
 
                         </form>
                     </div>
+                </div>
+
+                <div class="card-footer d-flex justify-content-end">
+
+                    @if( auth()->user()->can("roles.destroy") && auth()->id() !== $role->id || auth()->user()->isAdmin() )
+                        <a class="btn btn-danger " href="#"
+                           onclick="event.preventDefault(); document.getElementById('remove-form-{{$role->id}}').submit();">
+                            <i class="bi bi-trash"></i> {{ __('Remove') }}
+                        </a>
+
+                        <form id="remove-form-{{$role->id}}"
+                              action="{{route('roles.destroy', $role->id)}}" method="POST"
+                              class="d-none">
+                            @csrf
+                            @method("DELETE")
+                        </form>
+
+                    @endif
+
                 </div>
             </div>
         </div>

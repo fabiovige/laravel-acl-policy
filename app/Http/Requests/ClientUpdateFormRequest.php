@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ClientFormRequest extends FormRequest
+class ClientUpdateFormRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,8 @@ class ClientFormRequest extends FormRequest
     {
         return [
             'user_id' => 'nullable',
-            'corporate_name' => 'required',
-            'cnpj'=> 'required|unique:clients,cnpj|cnpj',
+            'name' => 'required',
+            'cnpj' => 'required|cnpj|unique:clients,cnpj,' . $this->client->id,
             'responsible_name' => 'required',
             'cell_phone' => 'required',
             'email' => 'required|email',
@@ -33,26 +33,26 @@ class ClientFormRequest extends FormRequest
             'number' => 'nullable',
             'complement' => 'nullable',
             'neighborhood' => 'required',
-            'city'=> 'required',
-            'state'=> 'required|uf',
+            'city' => 'required',
+            'state' => 'required|uf',
         ];
     }
 
     public function attributes()
     {
         return [
-            'corporate_name' => __('Corporate Name'),
-            'cnpj'=>  __('Cnpj'),
-            'responsible_name' =>  __('Responsible Name'),
-            'cell_phone' =>  __('Cell Phone'),
-            'email' =>  __('Email'),
-            'zip_code' =>  __('Zip Code'),
-            'address' =>  __('Address'),
-            'number' =>  __('Number'),
-            'complement' =>  __('Complement'),
-            'neighborhood' =>  __('Neighborhood'),
-            'city'=>  __('City'),
-            'state'=>  __('State'),
+            'name' => __('Corporate Name'),
+            'cnpj' => __('Cnpj'),
+            'responsible_name' => __('Responsible Name'),
+            'cell_phone' => __('Cell Phone'),
+            'email' => __('Email'),
+            'zip_code' => __('Zip Code'),
+            'address' => __('Address'),
+            'number' => __('Number'),
+            'complement' => __('Complement'),
+            'neighborhood' => __('Neighborhood'),
+            'city' => __('City'),
+            'state' => __('State'),
         ];
     }
 }
